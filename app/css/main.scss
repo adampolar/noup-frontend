@@ -1,0 +1,27 @@
+#other-players {
+    margin:0 auto;
+    >div {
+        text-align: center;
+        display: inline-block;
+        width:33%;
+        img {
+            width: 35%;
+        }
+    }
+}
+
+#deck {
+    width:10%;
+    margin: 0 auto;
+    img {
+        width: 100%;
+    }
+}
+
+#cards {
+    margin: 0 auto;
+    width:25%;
+    img {
+        width:49%;
+    }
+}
