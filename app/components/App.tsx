@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect, Dispatch, ActionCreator } from 'react-redux';
+import { Action } from 'redux';
 
 import { Card } from './Card';
 import { Deck } from './Deck';
@@ -7,12 +8,17 @@ import { Player } from './Player';
 import { ControlPanel } from './ControlPanel';
 
 import { Cards, State, PlayerModel } from '../models/Models'
-import { takeCoins } from '../actions';
+import { takeCoinsActionCreator, attemptActionCreator, actuateActionCreator, Actions } from '../actions';
 
 interface AppProps {
     me: PlayerModel;
     otherPlayers: PlayerModel[];
-    takeCoins: (a: number) => void
+    takeCoins: (a: PlayerModel) => (a: number) => void,
+    pendingTurn: {
+        player: PlayerModel,
+        action: Action
+    }
+    doTurn: () => void;
 }
 
 class App extends React.Component<AppProps, undefined> {
@@ -28,7 +34,11 @@ class App extends React.Component<AppProps, undefined> {
                     {otherPlayerView}
                 </div>
                 <Deck></Deck>
-                <ControlPanel isTurn={true} takeCoins={this.props.takeCoins} />
+                <ControlPanel
+                    isTurn={true}
+                    takeCoins={this.props.takeCoins(this.props.me)}
+                    doTurn={this.props.doTurn}
+                    pendingTurn={this.props.pendingTurn} />
                 <div id="cards">
                     <Player playerDetails={this.props.me} />
                 </div>
@@ -40,17 +50,20 @@ function mapStateToProps(state: State) {
     return {
         me: state.me,
         otherPlayers: state.otherPlayers,
+        pendingTurn: state.pendingTurn
     }
 }
 
 function mapDispatchToProps(dispatch: Dispatch<any>) {
     return {
-        takeCoins: function (coins: number) {
-            dispatch(takeCoins(coins));
+        takeCoins: (me: PlayerModel) => function (coins: number) {
+            dispatch(attemptActionCreator(takeCoinsActionCreator(coins), me));
+        },
+        doTurn: () => {
+            dispatch(actuateActionCreator());
         }
     }
 }
-
 
 let AppContainer = connect(mapStateToProps, mapDispatchToProps)(App);
 

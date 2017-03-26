@@ -1,7 +1,12 @@
 import { Action } from 'redux';
 
+import { PlayerModel } from '../models/Models';
+
 export enum Actions {
-    TAKE_COINS
+    TAKE_COINS,
+    ATTEMPT_ACTION,
+    CONFIRM_ACCEPTANCE,
+    ACTUATE_ACTION
 }
 
 export class TakeCoinsAction implements Action {
@@ -10,11 +15,45 @@ export class TakeCoinsAction implements Action {
 
 }
 
-export const getAction : (a: Actions) => string = (action: Actions) => Actions[action];
-
-export const takeCoins : (coins: number) => TakeCoinsAction = (coins) => {
-  return {
-    type: getAction(Actions.TAKE_COINS),
-    amount: coins
-  }
+export const takeCoinsActionCreator: (coins: number) => TakeCoinsAction = (coins) => {
+    return {
+        type: Actions.TAKE_COINS,
+        amount: coins
+    }
 }
+
+export class ConfirmAcceptanceAction implements Action {
+    type: any;
+    playerId: string;
+}
+
+export const confirmAcceptanceActionCreator: (playerId: string) => ConfirmAcceptanceAction =
+    (playerId) => {
+        return {
+            type: Actions.CONFIRM_ACCEPTANCE,
+            playerId: playerId
+        }
+    }
+
+export class AttemptActionAction implements Action {
+    type: any;
+    action: Action;
+    player: PlayerModel;
+}
+
+export const attemptActionCreator: (action: Action, player: PlayerModel) => AttemptActionAction =
+    (action, player) => {
+        return {
+            type: Actions.ATTEMPT_ACTION,
+            action: action,
+            player: player
+        }
+    }
+
+export const actuateActionCreator: () => Action =
+    () => {
+        return {
+            type: Actions.ACTUATE_ACTION
+        }
+    }
+
