@@ -3,6 +3,7 @@ import { Action } from 'redux';
 import * as update from 'immutability-helper';
 
 import { State, Cards } from '../models/Models';
+import { getAction, Actions } from '../actions';
 
 let defaultStateCreator = () => {
     return {
@@ -34,7 +35,7 @@ let initialDefaultState = defaultStateCreator();
 
 //no reducers currently
 export default (state: State = initialDefaultState, action: Action) => {
-    if (action.type === 'TAKE_COINS') {
+    if (action.type === getAction(Actions.TAKE_COINS)) {
         state = update(
             state,
             {
