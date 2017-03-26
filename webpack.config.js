@@ -5,6 +5,7 @@ module.exports = {
         publicPath: '/public/',
         filename: "bundle.js"
     },
+    devtool:"#eval-source-map",
     resolve: {
         // Add '.ts' and '.tsx' as resolvable extensions.
         extensions: [".ts", ".tsx", ".js", ".json"]
