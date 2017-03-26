@@ -12,7 +12,7 @@ import { takeCoins } from '../actions';
 interface AppProps {
     me: PlayerModel;
     otherPlayers: PlayerModel[];
-    takeCoins: ()=>void
+    takeCoins: (a: number) => void
 }
 
 class App extends React.Component<AppProps, undefined> {
@@ -45,11 +45,12 @@ function mapStateToProps(state: State) {
 
 function mapDispatchToProps(dispatch: Dispatch<any>) {
     return {
-        takeCoins: function () {
-            dispatch(takeCoins());
+        takeCoins: function (coins: number) {
+            dispatch(takeCoins(coins));
         }
     }
 }
+
 
 let AppContainer = connect(mapStateToProps, mapDispatchToProps)(App);
 

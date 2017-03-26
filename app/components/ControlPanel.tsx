@@ -6,7 +6,7 @@ import { Card } from './Card';
 
 export interface ControlPanelProps {
     isTurn: Boolean,
-    takeCoins:Function
+    takeCoins: Function
 }
 
 
@@ -15,7 +15,7 @@ export class ControlPanel extends React.Component<ControlPanelProps, undefined>{
 
         return (
             <div>
-                <button onClick={() => this.props.takeCoins()}>Take Coins</button>
+                <button onClick={() => this.props.takeCoins(3)}>Take Tax</button>
             </div>
         )
     }
