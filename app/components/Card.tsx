@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Cards } from './App';
+import { Cards } from '../models/Models';
 
 export interface CardProps {
     cardType: Cards

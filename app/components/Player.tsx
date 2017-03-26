@@ -1,26 +1,24 @@
 import * as React from 'react';
 
-import { Cards } from './App';
+import { Cards, PlayerModel } from '../models/Models';
 
 import { Card } from './Card';
 
 export interface CardProps {
-    playerDetails: {
-        name: string,
-        cardsVisible: Cards[]
-    }
+    playerDetails: PlayerModel
 }
 
 
 export class Player extends React.Component<CardProps, undefined>{
     render() {
 
-        this.props.playerDetails.cardsVisible
+        this.props.playerDetails.cards
         return (
             <div>
                 <div>{this.props.playerDetails.name}</div>
-                <Card cardType={this.props.playerDetails.cardsVisible[0]}/>
-                <Card cardType={this.props.playerDetails.cardsVisible[1]}/>
+                <div> Coin count: {this.props.playerDetails.coins}</div>
+                <Card cardType={this.props.playerDetails.cards[0]} />
+                <Card cardType={this.props.playerDetails.cards[1]} />
             </div>
         )
     }

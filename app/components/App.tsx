@@ -1,46 +1,26 @@
 import * as React from 'react';
+import { connect, Dispatch, ActionCreator } from 'react-redux';
 
 import { Card } from './Card';
 import { Deck } from './Deck';
 import { Player } from './Player';
+import { ControlPanel } from './ControlPanel';
 
-export enum Cards {
-    Ambassador,
-    Assassin,
-    Captain,
-    Contessa,
-    Duke
+import { Cards, State, PlayerModel } from '../models/Models'
+import { takeCoins } from '../actions';
+
+interface AppProps {
+    me: PlayerModel;
+    otherPlayers: PlayerModel[];
+    takeCoins: ()=>void
 }
 
-export class App extends React.Component<undefined, undefined> {
+class App extends React.Component<AppProps, undefined> {
 
     render() {
 
-        let CARDS = [
-            Cards.Assassin,
-            Cards.Duke
-        ]
-
-        let OTHER_PLAYERS = [
-            {
-                name: "treebeard",
-                cardsVisible: [null, null]
-            },
-            {
-                name: "Gandalf",
-                cardsVisible: [null, Cards.Ambassador]
-            },
-            {
-                name: "Saruman",
-                cardsVisible: [Cards.Captain, Cards.Contessa]
-            }
-        ]
-
-        let cardView = [] as JSX.Element[];
-        CARDS.forEach((c, i) => cardView.push(<Card cardType={c} key={i} />), this);
-
         let otherPlayerView = [] as JSX.Element[];
-        OTHER_PLAYERS.forEach((p, i) => otherPlayerView.push(<Player key={i} playerDetails={p} />))
+        this.props.otherPlayers.forEach((p, i) => otherPlayerView.push(<Player key={i} playerDetails={p} />))
 
         return (
             <div>
@@ -48,9 +28,29 @@ export class App extends React.Component<undefined, undefined> {
                     {otherPlayerView}
                 </div>
                 <Deck></Deck>
+                <ControlPanel isTurn={true} takeCoins={this.props.takeCoins} />
                 <div id="cards">
-                    {cardView}
+                    <Player playerDetails={this.props.me} />
                 </div>
             </div>)
     }
 }
+
+function mapStateToProps(state: State) {
+    return {
+        me: state.me,
+        otherPlayers: state.otherPlayers,
+    }
+}
+
+function mapDispatchToProps(dispatch: Dispatch<any>) {
+    return {
+        takeCoins: function () {
+            dispatch(takeCoins());
+        }
+    }
+}
+
+let AppContainer = connect(mapStateToProps, mapDispatchToProps)(App);
+
+export default AppContainer;
