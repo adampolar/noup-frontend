@@ -10,6 +10,7 @@ import { Card } from './Card';
 export interface ControlPanelProps {
     currentPlayerId: string,
     takeCoins: Function,
+    acceptTurn: () => void,
     pendingTurn: {
         action: Action,
         player: PlayerModel
@@ -35,7 +36,7 @@ export class ControlPanel extends React.Component<ControlPanelProps, undefined>{
                 <button disabled={ !isMyTurn || !!this.props.pendingTurn } onClick={() => this.props.takeCoins(2)}>Switch Cards</button>
                 <button disabled={ !isMyTurn || !!this.props.pendingTurn } onClick={() => this.props.takeCoins(1)}>Steal</button>
                 <button disabled={ !isMyTurn || !!this.props.pendingTurn } onClick={() => this.props.takeCoins(1)}>Coup</button>
-                <button disabled={ !isMyTurn || !this.props.pendingTurn } onClick={() => this.props.takeCoins(1)}>Agree</button>
+                <button disabled={ !isMyTurn || !this.props.pendingTurn } onClick={() => this.props.acceptTurn()}>Agree</button>
                 <button disabled={ !isMyTurn || !this.props.pendingTurn } onClick={() => this.props.takeCoins(1)}>Challenge</button>
                 <button disabled={ !isMyTurn || !this.props.pendingTurn } onClick={() => this.props.takeCoins(1)}>Block</button>
             </div>
