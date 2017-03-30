@@ -6,7 +6,8 @@ export enum Actions {
     TAKE_COINS,
     ATTEMPT_ACTION,
     CONFIRM_ACCEPTANCE,
-    ACTUATE_ACTION
+    ACTUATE_ACTION,
+    END_ACTION
 }
 
 export class TakeCoinsAction implements Action {
@@ -54,6 +55,13 @@ export const actuateActionCreator: () => Action =
     () => {
         return {
             type: Actions.ACTUATE_ACTION
+        }
+    }
+
+export const endActionCreator: () => Action =
+    () => {
+        return {
+            type: Actions.END_ACTION
         }
     }
 

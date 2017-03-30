@@ -31,8 +31,8 @@ let defaultStateCreator = () => {
             cards: [Cards.Assassin, Cards.Duke],
             coins: 7
         },
-        pendingTurn: null
-
+        pendingTurn: null,
+        currentPlayerId: "Adam"
     } as State;
 }
 
@@ -76,12 +76,27 @@ const confirmAcceptance = (state: State, action: ConfirmAcceptanceAction) => {
     )
 }
 
+export const getNextPlayer = (state: State) => {
+    //there is no find method :(
+        let playerIndex = -1;
+        let nextTurn = state.otherPlayers.forEach((player, index) => {
+            if(player.playerId === state.currentPlayerId) {
+                playerIndex = index;
+            }
+        })
+
+        return playerIndex === -1 ? 
+                state.otherPlayers[0].playerId  :
+                playerIndex === state.otherPlayers.length - 1 ?
+                    state.me.playerId : state.otherPlayers[playerIndex + 1];
+}
+
 export default (state: State = initialDefaultState, action: Action) => {
 
-    if (action.type === Actions.ACTUATE_ACTION) {
-        var state = reducers.filter(
-            reducer => reducer.type === state.pendingTurn.action.type
-        )[0].impl(state, state.pendingTurn.action);
+    if (action.type === Actions.END_ACTION) {
+
+
+        let nextPlayerId = getNextPlayer(state);
 
         state = update(state, {
             otherPlayers:
@@ -91,8 +106,16 @@ export default (state: State = initialDefaultState, action: Action) => {
                     return player;
                 }
             },
-            pendingTurn: { $set: null }
+            pendingTurn: { $set: null },
+            currentPlayerId: { $set: nextPlayerId }
         });
+
+    }
+
+    if (action.type === Actions.ACTUATE_ACTION) {
+        var state = reducers.filter(
+            reducer => reducer.type === state.pendingTurn.action.type
+        )[0].impl(state, state.pendingTurn.action);
 
         return state;
 

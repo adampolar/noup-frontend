@@ -13,15 +13,19 @@ import { takeCoinsActionCreator, attemptActionCreator, actuateActionCreator, Act
 interface AppProps {
     me: PlayerModel;
     otherPlayers: PlayerModel[];
-    takeCoins: (a: PlayerModel) => (a: number) => void,
     pendingTurn: {
         player: PlayerModel,
         action: Action
     }
-    doTurn: () => void;
+    currentPlayerId: string
 }
 
-class App extends React.Component<AppProps, undefined> {
+interface AppMethods {
+    takeCoins: (a: PlayerModel) => (a: number) => void,
+    doTurn: () => void,
+}
+
+class App extends React.Component<AppProps & AppMethods, undefined> {
 
     render() {
 
@@ -35,9 +39,9 @@ class App extends React.Component<AppProps, undefined> {
                 </div>
                 <Deck></Deck>
                 <ControlPanel
-                    isTurn={true}
+                    me={this.props.me}
+                    currentPlayerId={this.props.currentPlayerId}
                     takeCoins={this.props.takeCoins(this.props.me)}
-                    doTurn={this.props.doTurn}
                     pendingTurn={this.props.pendingTurn} />
                 <div id="cards">
                     <Player playerDetails={this.props.me} />
@@ -46,15 +50,16 @@ class App extends React.Component<AppProps, undefined> {
     }
 }
 
-function mapStateToProps(state: State) {
+function mapStateToProps(state: State): AppProps {
     return {
         me: state.me,
         otherPlayers: state.otherPlayers,
-        pendingTurn: state.pendingTurn
+        pendingTurn: state.pendingTurn,
+        currentPlayerId: state.currentPlayerId
     }
 }
 
-function mapDispatchToProps(dispatch: Dispatch<any>) {
+function mapDispatchToProps(dispatch: Dispatch<any>): AppMethods {
     return {
         takeCoins: (me: PlayerModel) => function (coins: number) {
             dispatch(attemptActionCreator(takeCoinsActionCreator(coins), me));

@@ -23,4 +23,5 @@ export type State = {
         player: PlayerModel;
         action: Action;
     };
+    currentPlayerId: string;
 }
