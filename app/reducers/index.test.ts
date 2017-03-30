@@ -5,7 +5,7 @@ import { State, Cards, PlayerModel } from '../models/Models';
 import { expect } from 'chai';
 import 'mocha';
 
-let createStateWithCurrentPlayer = (playerId: string) => {
+let createStater = () => {
     return {
         otherPlayers: [{
             playerId: "treebeard",
@@ -32,7 +32,7 @@ let createStateWithCurrentPlayer = (playerId: string) => {
             coins: 7
         },
         pendingTurn: null,
-        currentPlayerId: playerId
+        currentPlayerId: 'Gandalf'
     } as State;
 }
 
@@ -41,19 +41,19 @@ let createStateWithCurrentPlayer = (playerId: string) => {
 
 describe('GetNextPlayer', () => {
   it('should return next player', () => {
-    const result = getNextPlayer(createStateWithCurrentPlayer('Adam'));
+    const result = getNextPlayer(createStater(), 'Adam' );
     expect(result).to.equal('treebeard');
   });
   it('should return next player', () => {
-    const result = getNextPlayer(createStateWithCurrentPlayer('treebeard'));
+    const result = getNextPlayer(createStater(), 'treebeard');
     expect(result).to.equal('Gandalf');
   });
   it('should return next player', () => {
-    const result = getNextPlayer(createStateWithCurrentPlayer('Gandalf'));
+    const result = getNextPlayer(createStater(), 'Gandalf');
     expect(result).to.equal('Saruman');
   });
   it('should return next player', () => {
-    const result = getNextPlayer(createStateWithCurrentPlayer('Saruman'));
+    const result = getNextPlayer(createStater(), 'Saruman');
     expect(result).to.equal('Adam');
   });
 });

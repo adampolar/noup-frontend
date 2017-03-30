@@ -1,4 +1,4 @@
-import { Action } from 'redux';
+import { PlayerAction } from '../actions';
 
 export enum Cards {
     Ambassador,
@@ -21,7 +21,7 @@ export type State = {
     me: PlayerModel;
     pendingTurn: {
         player: PlayerModel;
-        action: Action;
+        action: PlayerAction;
     };
     currentPlayerId: string;
 }

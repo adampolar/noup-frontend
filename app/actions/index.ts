@@ -10,16 +10,21 @@ export enum Actions {
     END_ACTION
 }
 
-export class TakeCoinsAction implements Action {
+export interface PlayerAction extends Action {
+    noFurtherPlayerInteraction: boolean
+}
+
+export class TakeCoinsAction implements PlayerAction {
     type: any;
     amount: number;
-
+    noFurtherPlayerInteraction: boolean;
 }
 
 export const takeCoinsActionCreator: (coins: number) => TakeCoinsAction = (coins) => {
     return {
         type: Actions.TAKE_COINS,
-        amount: coins
+        amount: coins,
+        noFurtherPlayerInteraction: true
     }
 }
 
