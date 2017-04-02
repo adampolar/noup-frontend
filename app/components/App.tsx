@@ -10,6 +10,8 @@ import { ControlPanel } from './ControlPanel';
 import { Cards, State, PlayerModel } from '../models/Models'
 import {
     takeCoinsActionCreator,
+    stealCoinsActionCreator,
+    selectPlayerActionCreator,
     attemptActionCreator,
     actuateActionCreator,
     confirmAcceptanceActionCreator,
@@ -30,7 +32,9 @@ interface AppProps {
 
 interface AppMethods {
     takeCoins: (a: PlayerModel) => (a: number) => void,
-    acceptTurn: (a: PlayerModel) => () => void
+    acceptTurn: (a: PlayerModel) => () => void,
+    stealCoins: (a: PlayerModel) => (playerId: string) => void,
+    selectPlayer: (a: PlayerModel) => () => void
 }
 
 class App extends React.Component<AppProps & AppMethods, undefined> {
@@ -50,6 +54,7 @@ class App extends React.Component<AppProps & AppMethods, undefined> {
                     me={this.props.me}
                     currentPlayerId={this.props.currentPlayerId}
                     takeCoins={this.props.takeCoins(this.props.me)}
+                    stealCoins={this.props.stealCoins(this.props.me)}
                     pendingTurn={this.props.pendingTurn}
                     acceptTurn={this.props.acceptTurn(this.props.me)} />
                 <div id="cards">
@@ -59,18 +64,21 @@ class App extends React.Component<AppProps & AppMethods, undefined> {
                     me={this.props.otherPlayers[0]}
                     currentPlayerId={this.props.currentPlayerId}
                     takeCoins={this.props.takeCoins(this.props.otherPlayers[0])}
+                    stealCoins={this.props.stealCoins(this.props.otherPlayers[0])}
                     pendingTurn={this.props.pendingTurn}
                     acceptTurn={this.props.acceptTurn(this.props.otherPlayers[0])} />
                 <ControlPanel
                     me={this.props.otherPlayers[1]}
                     currentPlayerId={this.props.currentPlayerId}
                     takeCoins={this.props.takeCoins(this.props.otherPlayers[1])}
+                    stealCoins={this.props.stealCoins(this.props.otherPlayers[1])}
                     pendingTurn={this.props.pendingTurn}
                     acceptTurn={this.props.acceptTurn(this.props.otherPlayers[1])} />
                 <ControlPanel
                     me={this.props.otherPlayers[2]}
                     currentPlayerId={this.props.currentPlayerId}
                     takeCoins={this.props.takeCoins(this.props.otherPlayers[2])}
+                    stealCoins={this.props.stealCoins(this.props.otherPlayers[2])}
                     pendingTurn={this.props.pendingTurn}
                     acceptTurn={this.props.acceptTurn(this.props.otherPlayers[2])} />
             </div>)
@@ -93,6 +101,12 @@ function mapDispatchToProps(dispatch: Dispatch<any>): AppMethods {
         },
         acceptTurn: (me: PlayerModel) => () => {
             dispatch<any>(confirmAcceptanceAndTakeTurnIfRelevant(me));
+        },
+        stealCoins: (me: PlayerModel) => (playerId: string) => {
+            dispatch(attemptActionCreator(stealCoinsActionCreator(playerId), me))
+        },
+        selectPlayer: (selectedPlayer: PlayerModel) => () => {
+            dispatch(selectPlayerActionCreator(selectedPlayer.playerId));
         }
     }
 }

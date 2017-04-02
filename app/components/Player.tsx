@@ -5,16 +5,25 @@ import { Cards, PlayerModel } from '../models/Models';
 import { Card } from './Card';
 
 export interface CardProps {
-    playerDetails: PlayerModel
+    playerDetails: PlayerModel,
+    selectMode: boolean
+}
+export interface CardMethods {
+    selectPlayer: () => void
 }
 
 
-export class Player extends React.Component<CardProps, undefined>{
+export class Player extends React.Component<CardProps & CardMethods, undefined>{
     render() {
 
-        this.props.playerDetails.cards
+        let selectPlayerIfInSelectMode = () => {
+            if (this.props.selectMode) {
+                this.props.selectPlayer();
+            }
+        }
+
         return (
-            <div>
+            <div className="player" onClick={selectPlayerIfInSelectMode}>
                 <div>{this.props.playerDetails.name}</div>
                 <div> Coin count: {this.props.playerDetails.coins}</div>
                 <Card cardType={this.props.playerDetails.cards[0]} />

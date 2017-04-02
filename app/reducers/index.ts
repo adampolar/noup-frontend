@@ -3,7 +3,13 @@ import { Action } from 'redux';
 import * as update from 'immutability-helper';
 
 import { State, Cards, PlayerModel } from '../models/Models';
-import { Actions, TakeCoinsAction, AttemptActionAction, ConfirmAcceptanceAction } from '../actions';
+import { 
+    Actions, 
+    TakeCoinsAction, 
+    AttemptActionAction, 
+    ConfirmAcceptanceAction,
+    AntagonisticPlayerAction
+} from '../actions';
 
 let defaultStateCreator = () => {
     return {
@@ -72,19 +78,21 @@ let reducers = [
                 }
                 return player;
             });
-            /*return update(
-                state,
-                {
-                    me:
-                    {
-                        coins:
-                        {
-                            $set: state.me.coins + (action).amount
-                        }
-                    }
-                })*/
         }
-    }
+    },
+    {
+        type: Actions.STEAL_COINS,
+        impl: (state: State, action: AntagonisticPlayerAction) => {
+            return updatePlayerWithPlayerId(state, player => {
+                if (action.againstPlayerId === player.playerId) {
+                    player.coins -= 2;
+                } else if (player.playerId === state.pendingTurn.player.playerId) {
+                    player.coins += 2;
+                }
+                return player;
+            });
+        }
+    },
 ] as Array<{
     type: Actions,
     impl: (state: State, action: Action) => State;
