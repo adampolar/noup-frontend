@@ -9,7 +9,8 @@ export interface CardProps {
     selectMode: boolean
 }
 export interface CardMethods {
-    selectPlayer: () => void
+    selectPlayer: () => void,
+    selectCard: (card: Cards) => void
 }
 
 
@@ -26,8 +27,8 @@ export class Player extends React.Component<CardProps & CardMethods, undefined>{
             <div className="player">
                 <div>{this.props.playerDetails.name}</div>
                 <div> Coin count: {this.props.playerDetails.coins}</div>
-                <Card cardType={this.props.playerDetails.cards[0]} />
-                <Card cardType={this.props.playerDetails.cards[1]} />
+                <Card cardType={this.props.playerDetails.cards[0]} onClick={this.props.selectCard}/>
+                <Card cardType={this.props.playerDetails.cards[1]} onClick={this.props.selectCard} />
                 <button disabled={!this.props.selectMode} onClick={this.props.selectPlayer}>select</button>
             </div>
         )

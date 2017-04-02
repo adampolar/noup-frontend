@@ -1,46 +1,55 @@
 import { Action } from 'redux';
 
-import { PlayerModel } from '../models/Models';
+import { PlayerModel, Cards } from '../models/Models';
 
 export enum Actions {
     TAKE_COINS,
     STEAL_COINS,
+    COUP,
     SELECT_PLAYER_ACTION,
+    SELECT_CARD_ACTION,
     ATTEMPT_ACTION,
     CONFIRM_ACCEPTANCE,
     ACTUATE_ACTION,
-    END_ACTION
+    END_ACTION,
+    SET_NAME_ACTION
 }
 
-export interface PlayerAction extends Action {
+export class PlayerAction implements Action {
     noFurtherPlayerInteraction: boolean
+    type: any;
+    againstPlayerId: string;
+    requiresAcceptance: boolean;
 }
 
-export class AntagonisticPlayerAction implements PlayerAction {
-    noFurtherPlayerInteraction: boolean;
-    type: any;
-    againstPlayerId: string
-}
-
-export class TakeCoinsAction implements PlayerAction {
-    type: any;
+export class TakeCoinsAction extends PlayerAction {
     amount: number;
-    noFurtherPlayerInteraction: boolean;
 }
 
 export const takeCoinsActionCreator: (coins: number) => TakeCoinsAction = (coins) => {
     return {
         type: Actions.TAKE_COINS,
         amount: coins,
-        noFurtherPlayerInteraction: true
+        noFurtherPlayerInteraction: true,
+        againstPlayerId: null,
+        requiresAcceptance: true
     }
 }
 
-export const stealCoinsActionCreator: () => AntagonisticPlayerAction = () => {
+export const stealCoinsActionCreator: () => PlayerAction = () => {
     return {
         type: Actions.STEAL_COINS,
         noFurtherPlayerInteraction: true,
-        againstPlayerId: null
+        againstPlayerId: null,
+        requiresAcceptance: true
+    }
+}
+
+export const coupActionCreator: () => PlayerAction = () => {
+    return {type: Actions.COUP,
+        noFurtherPlayerInteraction: true,
+        againstPlayerId: null,
+        requiresAcceptance: false
     }
 }
 
@@ -54,6 +63,18 @@ export const selectPlayerActionCreator: (playerId: string) => SelectPlayerAction
         selectedPlayerId: playerId,
         type: Actions.SELECT_PLAYER_ACTION
     } as SelectPlayerAction;
+}
+
+export class SelectCardAction implements Action {
+    type = Actions.SELECT_CARD_ACTION;
+    card: Cards;
+}
+
+export const selectCardActionCreator: (card: Cards) => SelectCardAction = (card) => {
+    return {
+        card: card,
+        type: Actions.SELECT_CARD_ACTION
+    } as SelectCardAction;
 }
 
 export class ConfirmAcceptanceAction implements Action {
@@ -99,4 +120,16 @@ export const endActionCreator: () => Action =
             type: Actions.END_ACTION
         }
     }
+
+export class SetNameAction implements Action {
+    type: Actions;
+    name: string;
+}  
+
+export const setNameActionCreator: (name: string) => SetNameAction = (name) => {
+    return {
+        type: Actions.SET_NAME_ACTION,
+        name: name
+    }
+}
 

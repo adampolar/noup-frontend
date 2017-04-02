@@ -5,7 +5,7 @@ import { updatePlayerWithPlayerId } from '../models/ModelUtils';
 import { 
     Actions, 
     TakeCoinsAction,
-    AntagonisticPlayerAction
+    PlayerAction
 } from '../actions';
 
 export default [
@@ -22,7 +22,7 @@ export default [
     },
     {
         type: Actions.STEAL_COINS,
-        impl: (state: State, action: AntagonisticPlayerAction) => {
+        impl: (state: State, action: PlayerAction) => {
             return updatePlayerWithPlayerId(state, player => {
                 if (action.againstPlayerId === player.playerId) {
                     player.coins -= 2;

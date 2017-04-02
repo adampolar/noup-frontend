@@ -19,7 +19,8 @@ export interface ControlPanelProps {
 export enum ControlPanelPhases {
     TURN_PHASE,
     CHALLENGE_PHASE,
-    SELECT_PLAYER_PHASE
+    SELECT_PLAYER_PHASE,
+    REMOVE_CARD_PHASE
 }
 
 

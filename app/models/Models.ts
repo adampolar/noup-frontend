@@ -26,4 +26,5 @@ export type State = {
     };
     currentPlayerId: string;
     isSelectMode: boolean;
+    started:boolean;
 }

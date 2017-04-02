@@ -6,7 +6,7 @@ export class Deck extends React.Component<undefined, undefined> {
     render() {
         return (
             <div id="deck">
-                <Card cardType={null} />
+                <Card onClick={() => null } cardType={null} />
             </div>
         )
     }

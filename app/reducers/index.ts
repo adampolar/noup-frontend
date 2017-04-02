@@ -10,37 +10,23 @@ import {
     TakeCoinsAction,
     AttemptActionAction,
     ConfirmAcceptanceAction,
-    SelectPlayerAction
+    SelectPlayerAction,
+    PlayerAction,
+    SetNameAction
 } from '../actions';
 
 let defaultStateCreator = () => {
     return {
-        otherPlayers: [{
-            playerId: "treebeard",
-            name: "treebeard",
-            cards: [null, null],
-            coins: 1
-        },
-        {
-            playerId: "Gandalf",
-            name: "Gandalf",
-            cards: [null, Cards.Ambassador],
-            coins: 3
-        },
-        {
-            playerId: "Saruman",
-            name: "Saruman",
-            cards: [Cards.Captain, Cards.Captain],
-            coins: 2
-        }],
+        otherPlayers: [],
         me: {
-            playerId: "Adam",
-            name: "Adam",
-            cards: [Cards.Assassin, Cards.Duke],
-            coins: 7
+            playerId: null,
+            name: null,
+            cards: [],
+            coins: 2
         },
         pendingTurn: null,
-        currentPlayerId: "Adam"
+        currentPlayerId: null,
+        started: false
     } as State;
 }
 
@@ -79,6 +65,15 @@ export const getNextPlayer = (state: State, playerId: string) => {
 
 export default (state: State = initialDefaultState, action: Action) => {
 
+    if (action.type === Actions.SET_NAME_ACTION) {
+        state = update(state, {
+            me: {
+                name: { $set: (<SetNameAction>action).name }
+            }
+        });
+        return state;
+    }
+
     if (action.type === Actions.SELECT_PLAYER_ACTION) {
         state = update(state, {
             pendingTurn: {
@@ -90,7 +85,11 @@ export default (state: State = initialDefaultState, action: Action) => {
                 $set: false
             },
             currentPlayerId: {
-                $set: getNextPlayer(state, state.currentPlayerId)
+                $set:
+                (<PlayerAction>state.pendingTurn.action)
+                    .requiresAcceptance ?
+                    getNextPlayer(state, state.currentPlayerId) :
+                    state.pendingTurn.againstPlayerId
             }
 
         });

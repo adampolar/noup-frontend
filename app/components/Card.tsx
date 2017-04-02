@@ -5,15 +5,19 @@ export interface CardProps {
     cardType: Cards
 }
 
-export class Card extends React.Component<CardProps, undefined> {
+export interface CardMethods {
+    onClick: (card: Cards) => void
+}
+
+export class Card extends React.Component<CardProps & CardMethods, undefined> {
     render() {
         return (
-            <img src={
-                    require('../images/' +
-                        ((this.props.cardType === null) ?
-                            'Default' :
-                            Cards[this.props.cardType]) + '.png')
-                } />
+            <img onClick={() => this.props.onClick(this.props.cardType)} src={
+                require('../images/' +
+                    ((!this.props.cardType) ?
+                        'Default' :
+                        Cards[this.props.cardType]) + '.png')
+            } />
         )
     }
 }

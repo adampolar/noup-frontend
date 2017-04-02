@@ -1,10 +1,12 @@
 import { Dispatch } from 'redux';
 import { PlayerModel, State } from '../models/Models';
-import { 
-    confirmAcceptanceActionCreator, 
+import {
+    confirmAcceptanceActionCreator,
     actuateActionCreator,
-    endActionCreator
- } from '../actions';
+    endActionCreator,
+    setNameActionCreator
+} from '../actions';
+import { getRemoteState } from '../server/RemoteStateFactory'
 
 const checkTurnShouldGoAhead: (state: State, me: PlayerModel) => boolean =
     (state: State, me: PlayerModel) => {
@@ -30,11 +32,21 @@ export const confirmAcceptanceAndTakeTurnIfRelevant:
 
             if (checkTurnShouldGoAhead(state, player)) {
                 dispatch(actuateActionCreator());
-                if(state.pendingTurn.action.noFurtherPlayerInteraction) {
+                if (state.pendingTurn.action.noFurtherPlayerInteraction) {
                     dispatch(endActionCreator());
                     return;
                 }
             }
             dispatch(confirmAcceptanceActionCreator(player.playerId))
+        }
+    }
+
+export const setNameRemoteAction: (name: string) =>
+    (dispatch: Dispatch<any>, getState: () => State) => void =
+
+    (name: string) => {
+        return (dispatch: Dispatch<any>, getState: () => State) => {
+             getRemoteState().setName(name,
+                ()=> dispatch(setNameActionCreator(name)));
         }
     }
