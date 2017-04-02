@@ -22,6 +22,8 @@ export type State = {
     pendingTurn: {
         player: PlayerModel;
         action: PlayerAction;
+        againstPlayerId: string;
     };
     currentPlayerId: string;
+    isSelectMode: boolean;
 }

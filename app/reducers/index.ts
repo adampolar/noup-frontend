@@ -2,13 +2,15 @@ import { Action } from 'redux';
 
 import * as update from 'immutability-helper';
 
+import reducers from '../reducers/GameMoveReducers';
 import { State, Cards, PlayerModel } from '../models/Models';
-import { 
-    Actions, 
-    TakeCoinsAction, 
-    AttemptActionAction, 
+import { updatePlayerWithPlayerId } from '../models/ModelUtils';
+import {
+    Actions,
+    TakeCoinsAction,
+    AttemptActionAction,
     ConfirmAcceptanceAction,
-    AntagonisticPlayerAction
+    SelectPlayerAction
 } from '../actions';
 
 let defaultStateCreator = () => {
@@ -44,59 +46,6 @@ let defaultStateCreator = () => {
 
 let initialDefaultState = defaultStateCreator();
 
-const updatePlayerWithPlayerId: (s: State, perPlayerCallback: (p: PlayerModel) => PlayerModel) => State =
-    (state: State, perPlayerCallback: (p: PlayerModel) => PlayerModel) => {
-
-        state = update(state,
-            {
-                otherPlayers:
-                {
-                    $apply: (players: Array<PlayerModel>) => {
-                        players.forEach(perPlayerCallback);
-                        return players;
-                    }
-                },
-                me: {
-                    $apply: (player: PlayerModel) => {
-                        return perPlayerCallback(player);
-                    }
-                }
-            }
-        );
-        return state;
-
-
-    }
-
-let reducers = [
-    {
-        type: Actions.TAKE_COINS,
-        impl: (state: State, action: TakeCoinsAction) => {
-            return updatePlayerWithPlayerId(state, player => {
-                if (state.pendingTurn.player.playerId === player.playerId) {
-                    player.coins += action.amount;
-                }
-                return player;
-            });
-        }
-    },
-    {
-        type: Actions.STEAL_COINS,
-        impl: (state: State, action: AntagonisticPlayerAction) => {
-            return updatePlayerWithPlayerId(state, player => {
-                if (action.againstPlayerId === player.playerId) {
-                    player.coins -= 2;
-                } else if (player.playerId === state.pendingTurn.player.playerId) {
-                    player.coins += 2;
-                }
-                return player;
-            });
-        }
-    },
-] as Array<{
-    type: Actions,
-    impl: (state: State, action: Action) => State;
-}>;
 
 const confirmAcceptance = (state: State, action: ConfirmAcceptanceAction) => {
     updatePlayerWithPlayerId(state, player => {
@@ -107,25 +56,6 @@ const confirmAcceptance = (state: State, action: ConfirmAcceptanceAction) => {
     });
     state = update(state,
         {
-            /*otherPlayers:
-            {
-                $apply: (players: Array<PlayerModel>) => {
-                    players.forEach(player => {
-                        if (player.playerId === action.playerId) {
-                            player.acceptsCurrentTurn = true;
-                        }
-                    });
-                    return players;
-                }
-            },
-            me: {
-                $apply: (player: PlayerModel) => {
-                    if (player.playerId === action.playerId) {
-                        player.acceptsCurrentTurn = true;
-                    }
-                    return player;
-                }
-            },*/
             currentPlayerId: { $set: getNextPlayer(state, state.currentPlayerId) }
         }
     );
@@ -148,6 +78,24 @@ export const getNextPlayer = (state: State, playerId: string) => {
 }
 
 export default (state: State = initialDefaultState, action: Action) => {
+
+    if (action.type === Actions.SELECT_PLAYER_ACTION) {
+        state = update(state, {
+            pendingTurn: {
+                action: {
+                    againstPlayerId: { $set: (<SelectPlayerAction>action).selectedPlayerId }
+                }
+            },
+            isSelectMode: {
+                $set: false
+            },
+            currentPlayerId: {
+                $set: getNextPlayer(state, state.currentPlayerId)
+            }
+
+        });
+        return state;
+    }
 
     if (action.type === Actions.END_ACTION) {
 
@@ -189,8 +137,14 @@ export default (state: State = initialDefaultState, action: Action) => {
                     player: (<AttemptActionAction>action).player
                 }
             },
+            isSelectMode: {
+                $set: (<AttemptActionAction>action).isAntagonistic
+            },
             currentPlayerId: {
-                $set: getNextPlayer(state, (<AttemptActionAction>action).player.playerId)
+                $set:
+                (<AttemptActionAction>action).isAntagonistic ?
+                    state.currentPlayerId :
+                    getNextPlayer(state, (<AttemptActionAction>action).player.playerId)
             }
         });
     } else if (action.type === Actions.CONFIRM_ACCEPTANCE) {

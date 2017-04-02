@@ -5,7 +5,6 @@ import { PlayerModel } from '../models/Models';
 export enum Actions {
     TAKE_COINS,
     STEAL_COINS,
-    DO_ANTAGONISTIC_ACTION,
     SELECT_PLAYER_ACTION,
     ATTEMPT_ACTION,
     CONFIRM_ACCEPTANCE,
@@ -37,11 +36,11 @@ export const takeCoinsActionCreator: (coins: number) => TakeCoinsAction = (coins
     }
 }
 
-export const stealCoinsActionCreator: (playerId: string) => AntagonisticPlayerAction = (playerId) => {
+export const stealCoinsActionCreator: () => AntagonisticPlayerAction = () => {
     return {
         type: Actions.STEAL_COINS,
         noFurtherPlayerInteraction: true,
-        againstPlayerId: playerId
+        againstPlayerId: null
     }
 }
 
@@ -52,7 +51,8 @@ export class SelectPlayerAction implements Action {
 
 export const selectPlayerActionCreator: (playerId: string) => SelectPlayerAction = (playerId) => {
     return {
-        selectedPlayerId: playerId
+        selectedPlayerId: playerId,
+        type: Actions.SELECT_PLAYER_ACTION
     } as SelectPlayerAction;
 }
 
@@ -73,14 +73,16 @@ export class AttemptActionAction implements Action {
     type: any;
     action: Action;
     player: PlayerModel;
+    isAntagonistic: boolean;
 }
 
-export const attemptActionCreator: (action: Action, player: PlayerModel) => AttemptActionAction =
-    (action, player) => {
+export const attemptActionCreator: (action: Action, player: PlayerModel, isAntagonistic: boolean) => AttemptActionAction =
+    (action, player, isAntagonistic) => {
         return {
             type: Actions.ATTEMPT_ACTION,
             action: action,
-            player: player
+            player: player,
+            isAntagonistic: isAntagonistic,
         }
     }
 

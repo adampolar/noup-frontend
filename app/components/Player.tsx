@@ -23,11 +23,12 @@ export class Player extends React.Component<CardProps & CardMethods, undefined>{
         }
 
         return (
-            <div className="player" onClick={selectPlayerIfInSelectMode}>
+            <div className="player">
                 <div>{this.props.playerDetails.name}</div>
                 <div> Coin count: {this.props.playerDetails.coins}</div>
                 <Card cardType={this.props.playerDetails.cards[0]} />
                 <Card cardType={this.props.playerDetails.cards[1]} />
+                <button disabled={!this.props.selectMode} onClick={this.props.selectPlayer}>select</button>
             </div>
         )
     }
